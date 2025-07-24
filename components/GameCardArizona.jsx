@@ -3,6 +3,7 @@ import Image from 'next/image';
 import QuestionIcon from './QuestionIcon';
 import HGPIcon from './HGPIcon';
 import FindGameButton from './FindGameButton';
+import EyeIcon from './EyeIcon';
 
 export default function GameCardArizona() {
   const commonBlockStyle = {
@@ -128,7 +129,9 @@ export default function GameCardArizona() {
         </div>
       </div>
       <div style={{ marginTop: 24, display: 'flex', alignItems: 'center', gap: 12 }}>
-        <Image src="/images/Arizona/Mobile/Show On.svg" alt="show" width={28} height={28} />
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: 40, height: 40 }}>
+          <EyeIcon />
+        </div>
         <div style={{ flex: '0 1 280px' }}>
           <FindGameButton />
         </div>
