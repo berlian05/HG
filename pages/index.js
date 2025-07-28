@@ -24,6 +24,8 @@ export default function Home() {
       <GameCard title="Random game" />
       <div style={{ height: 24 }} />
       <GameCardArizona />
+      <div style={{ height: 24 }} />
+      <GameCardArizona />
       <BottomNavBar />
     </div>
   );

@@ -28,15 +28,17 @@ export default function BottomNavBar() {
           </svg>
         </div>
       </Link>
-      {/* Текущие игры */}
-      <Link href="/game" style={{ textDecoration: 'none' }}>
+
+      {/* Топ игроков */}
+      <Link href="/top" style={{ textDecoration: 'none' }}>
         <div style={{ cursor: 'pointer' }}>
           <svg width="17" height="20" viewBox="0 0 17 20" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M9.832 19.8011C12.958 19.1751 17 16.9261 17 11.1111C17 5.82005 13.127 2.29605 10.341 0.677053C9.724 0.317053 9 0.790053 9 1.50505V3.33305C9 4.77505 8.394 7.40705 6.71 8.50205C5.85 9.06105 4.92 8.22405 4.816 7.20405L4.73 6.36605C4.63 5.39205 3.638 4.80105 2.86 5.39505C1.461 6.46005 0 8.33005 0 11.1101C0 18.2211 5.289 20.0001 7.933 20.0001C8.087 20.0001 8.249 19.9941 8.417 19.9851C7.111 19.8741 5 19.0641 5 16.4441C5 14.3941 6.495 13.0091 7.631 12.3341C7.937 12.1541 8.294 12.3891 8.294 12.7441V13.3341C8.294 13.7841 8.469 14.4891 8.884 14.9711C9.354 15.5171 10.043 14.9451 10.098 14.2271C10.116 14.0011 10.344 13.8571 10.54 13.9711C11.181 14.3461 12 15.1461 12 16.4441C12 18.4921 10.871 19.4341 9.832 19.8011Z" fill="#9CA6ED"/>
           </svg>
         </div>
       </Link>
-      {/* Пустая центральная кнопка */}
+
+      {/* Центральная кнопка */}
       <Link href="#" style={{ textDecoration: 'none', position: 'relative' }}>
         <div style={{
           position: 'relative',
@@ -78,6 +80,7 @@ export default function BottomNavBar() {
           </div>
         </div>
       </Link>
+
       {/* Друзья */}
       <Link href="/friends" style={{ textDecoration: 'none' }}>
         <div style={{ cursor: 'pointer' }}>
@@ -86,6 +89,7 @@ export default function BottomNavBar() {
           </svg>
         </div>
       </Link>
+
       {/* Профиль */}
       <Link href="/profile" style={{ textDecoration: 'none' }}>
         <div style={{ cursor: 'pointer' }}>

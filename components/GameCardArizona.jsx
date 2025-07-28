@@ -2,8 +2,9 @@ import { useState, useRef } from 'react';
 import Image from 'next/image';
 import QuestionIcon from './QuestionIcon';
 import HGPIcon from './HGPIcon';
-import FindGameButton from './FindGameButton';
 import EyeIcon from './EyeIcon';
+import JoinGame from './JoinGame';
+import TimerIcon from './TimerIcon';
 
 export default function GameCardArizona() {
   const commonBlockStyle = {
@@ -19,19 +20,27 @@ export default function GameCardArizona() {
   const NumberWithHGP = ({ number }) => (
     <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
       <span style={{
-        color: '#FFD44D',
+        background: 'linear-gradient(180deg, #FFB800 0%, #FF8A00 100%)',
+        WebkitBackgroundClip: 'text',
+        WebkitTextFillColor: 'transparent',
+        backgroundClip: 'text',
+        color: 'transparent',
         fontFamily: 'Ranchers, cursive',
-        fontSize: '22px',
+        fontSize: '32px',
         transform: 'rotate(-6deg)',
         display: 'inline-block',
-        marginRight: 2,
+        marginRight: 4,
       }}>
         {number}
       </span>
       <span style={{
-        color: '#FFD44D',
+        background: 'linear-gradient(180deg, #FFB800 0%, #FF8A00 100%)',
+        WebkitBackgroundClip: 'text',
+        WebkitTextFillColor: 'transparent',
+        backgroundClip: 'text',
+        color: 'transparent',
         fontFamily: 'Ranchers, cursive',
-        fontSize: '14px',
+        fontSize: '20px',
         transform: 'rotate(-6deg)',
         display: 'inline-block',
       }}>
@@ -91,7 +100,7 @@ export default function GameCardArizona() {
           height: 'auto',
           flexDirection: 'column',
           gap: 4,
-          padding: '16px',
+          padding: '20px 16px',
         }}>
           <div style={{
             display: 'flex',
@@ -106,10 +115,11 @@ export default function GameCardArizona() {
             justifyContent: 'space-between',
             width: '100%',
             borderTop: '1px solid rgba(255,255,255,0.1)',
-            paddingTop: 8,
-            marginTop: 4,
+            paddingTop: 12,
+            marginTop: 8,
           }}>
             <div style={{ color: '#a3a3d1', fontSize: 14 }}>Total Prizes</div>
+            <div style={{ width: 2, height: 20, background: 'rgba(163,163,209,0.18)', borderRadius: 2 }} />
             <div style={{ color: '#a3a3d1', fontSize: 14 }}>Jackpot</div>
           </div>
         </div>
@@ -119,21 +129,49 @@ export default function GameCardArizona() {
         margin: '24px 0 0 0',
       }}>
         <Image src="/images/Random game/Mobile/Profile.svg" alt="profile" width={20} height={20} />
+        <div style={{ width: 2, height: 28, background: 'rgba(163,163,209,0.18)', borderRadius: 2 }} />
         <div style={{ color: '#b3b3e6', fontSize: 16, display: 'flex', alignItems: 'center', gap: 6 }}>
-          <Image src="/images/Random game/Mobile/Frame 20765.svg" alt="timer" width={20} height={20} />
+          <div style={{ display: 'flex', alignItems: 'center' }}>
+            <TimerIcon />
+          </div>
           Instantly
         </div>
+        <div style={{ width: 2, height: 28, background: 'rgba(163,163,209,0.18)', borderRadius: 2 }} />
         <div style={{ color: '#b3b3e6', fontSize: 16, display: 'flex', alignItems: 'center', gap: 6 }}>
           <Image src="/images/Random game/Mobile/Iconly/Bulk/Time-Circle.svg" alt="sec" width={20} height={20} />
-          ? sec
+          10 sec
         </div>
       </div>
-      <div style={{ marginTop: 24, display: 'flex', alignItems: 'center', gap: 12 }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: 40, height: 40 }}>
+      <div style={{ marginTop: 24, display: 'flex', alignItems: 'center', gap: 8, position: 'relative' }}>
+        <div style={{ 
+          position: 'absolute', 
+          left: -4, 
+          display: 'flex', 
+          alignItems: 'center', 
+          justifyContent: 'center', 
+          width: 40, 
+          height: 40,
+          zIndex: 2,
+          transform: 'translateY(4px)'
+        }}>
           <EyeIcon />
         </div>
-        <div style={{ flex: '0 1 280px' }}>
-          <FindGameButton />
+        <div style={{ flex: '1 1 auto', maxWidth: 334, height: 140, marginLeft: 24, position: 'relative' }}>
+          <JoinGame />
+          <button 
+            style={{
+              position: 'absolute',
+              top: 48,
+              left: 48,
+              width: 238,
+              height: 40,
+              background: 'transparent',
+              border: 'none',
+              borderRadius: 20,
+              cursor: 'pointer',
+              zIndex: 10,
+            }}
+          />
         </div>
       </div>
     </div>

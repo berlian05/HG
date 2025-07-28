@@ -3,6 +3,7 @@ import Image from 'next/image';
 import QuestionIcon from './QuestionIcon';
 import HGPIcon from './HGPIcon';
 import FindGameButton from './FindGameButton';
+import TimerIcon from './TimerIcon';
 
 export default function GameCard({ title = 'Random game' }) {
   const commonBlockStyle = {
@@ -88,6 +89,7 @@ export default function GameCard({ title = 'Random game' }) {
             marginTop: 4,
           }}>
             <div style={{ color: '#a3a3d1', fontSize: 14 }}>Total Prizes</div>
+            <div style={{ width: 2, height: 20, background: 'rgba(163,163,209,0.18)', borderRadius: 2 }} />
             <div style={{ color: '#a3a3d1', fontSize: 14 }}>Jackpot</div>
           </div>
         </div>
@@ -97,10 +99,14 @@ export default function GameCard({ title = 'Random game' }) {
         margin: '24px 0 0 0',
       }}>
         <Image src="/images/Random game/Mobile/Profile.svg" alt="profile" width={20} height={20} />
+        <div style={{ width: 2, height: 28, background: 'rgba(163,163,209,0.18)', borderRadius: 2 }} />
         <div style={{ color: '#b3b3e6', fontSize: 16, display: 'flex', alignItems: 'center', gap: 6 }}>
-          <Image src="/images/Random game/Mobile/Frame 20765.svg" alt="timer" width={20} height={20} />
+          <div style={{ display: 'flex', alignItems: 'center' }}>
+            <TimerIcon />
+          </div>
           Instantly
         </div>
+        <div style={{ width: 2, height: 28, background: 'rgba(163,163,209,0.18)', borderRadius: 2 }} />
         <div style={{ color: '#b3b3e6', fontSize: 16, display: 'flex', alignItems: 'center', gap: 6 }}>
           <Image src="/images/Random game/Mobile/Iconly/Bulk/Time-Circle.svg" alt="sec" width={20} height={20} />
           ? sec

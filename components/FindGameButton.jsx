@@ -8,7 +8,7 @@ export default function FindGameButton() {
     // Создаем несколько аудио элементов для одновременного воспроизведения
     const elements = [];
     for (let i = 0; i < 3; i++) {
-      const audio = new Audio('/sounds/button-click-deep.mp3');
+      const audio = new Audio('/sounds/button.mp3');
       audio.volume = 0.8;
       audio.load();
       elements.push(audio);

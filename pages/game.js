@@ -1,39 +1,108 @@
+import React from 'react';
 import Header from '../components/Header';
 import BottomNavBar from '../components/BottomNavBar';
-import GameCard from '../components/GameCard';
+import CircleTimer from '../components/game/CircleTimer';
+import BetButton from '../components/game/BetButton';
 
 export default function Game() {
   return (
     <div style={{
+      background: 'linear-gradient(180deg, #0D1330 0%, #1A2046 100%)',
       minHeight: '100vh',
-      background: 'linear-gradient(180deg, #0e1330 0%, #1a2046 60%, #18183a 100%)',
-      paddingBottom: 90,
-      width: '100vw',
-      margin: 0,
-      position: 'relative',
-      overflow: 'hidden',
-      paddingTop: 92,
+      paddingTop: '92px',
+      paddingBottom: '90px',
+      position: 'relative'
     }}>
       <Header />
-      <main style={{ padding: '0 16px' }}>
-        <h1 style={{ 
-          color: '#FFD44D', 
-          textAlign: 'center',
-          fontSize: 28,
-          marginBottom: 24,
-          textShadow: '0 2px 8px #0e1330cc',
-        }}>🔥 Текущие игры</h1>
-        
+      
+      <main style={{
+        padding: '16px',
+        maxWidth: '480px',
+        margin: '0 auto'
+      }}>
+        {/* Game title */}
         <div style={{
           display: 'flex',
-          flexDirection: 'column',
-          gap: 24,
+          alignItems: 'center',
+          justifyContent: 'center',
+          marginBottom: '24px'
         }}>
-          <GameCard title="Популярная игра #1" isTimer={true} />
-          <GameCard title="Популярная игра #2" isTimer={true} />
-          <GameCard title="Популярная игра #3" isTimer={true} />
+          <h1 style={{
+            color: 'white',
+            fontSize: '24px',
+            fontFamily: 'Poppins, sans-serif',
+            margin: 0
+          }}>Arizona</h1>
+        </div>
+
+        {/* Bet amounts */}
+        <div style={{
+          display: 'flex',
+          justifyContent: 'center',
+          gap: '8px',
+          marginBottom: '32px'
+        }}>
+          {[10, 50, 250, 500, 1000].map((amount, index) => (
+            <button
+              key={amount}
+              style={{
+                background: index === 2 ? '#FF8A00' : 'rgba(13, 16, 48, 0.6)',
+                border: 'none',
+                borderRadius: '12px',
+                padding: '8px 12px',
+                color: 'white',
+                fontSize: '14px',
+                fontFamily: 'Poppins, sans-serif',
+                cursor: 'pointer',
+                position: 'relative',
+                minWidth: '60px'
+              }}
+            >
+              {amount}
+              <div style={{
+                fontSize: '10px',
+                opacity: 0.6
+              }}>WLD</div>
+              {index === 2 && (
+                <div style={{
+                  position: 'absolute',
+                  top: '-8px',
+                  left: '50%',
+                  transform: 'translateX(-50%)',
+                  width: 0,
+                  height: 0,
+                  borderLeft: '8px solid transparent',
+                  borderRight: '8px solid transparent',
+                  borderTop: '8px solid #FF8A00'
+                }} />
+              )}
+            </button>
+          ))}
+        </div>
+
+        {/* Timer */}
+        <div style={{ marginBottom: '32px' }}>
+          <CircleTimer time={81} />
+        </div>
+
+        {/* Bet button */}
+        <BetButton />
+
+        {/* Win amount */}
+        <div style={{
+          background: 'rgba(13, 16, 48, 0.6)',
+          borderRadius: '12px',
+          padding: '12px',
+          marginTop: '24px',
+          textAlign: 'center',
+          color: '#9CA6ED',
+          fontSize: '14px',
+          fontFamily: 'Poppins, sans-serif'
+        }}>
+          YOUR WIN (5 320 WLD)
         </div>
       </main>
+
       <BottomNavBar />
     </div>
   );

@@ -1,8 +1,9 @@
 import React from 'react';
 import Header from '../components/Header';
 import BottomNavBar from '../components/BottomNavBar';
+import Timer from '../components/waiting-room/Timer';
 
-export default function FriendsPage() {
+export default function WaitingRoom() {
   return (
     <div style={{
       background: 'linear-gradient(180deg, #0D1330 0%, #1A2046 100%)',
@@ -18,11 +19,11 @@ export default function FriendsPage() {
         maxWidth: '480px',
         margin: '0 auto'
       }}>
-        {/* Header */}
+        {/* Room info */}
         <div style={{
           display: 'flex',
           alignItems: 'center',
-          gap: '8px',
+          justifyContent: 'space-between',
           marginBottom: '16px'
         }}>
           <div style={{
@@ -32,61 +33,48 @@ export default function FriendsPage() {
           }}>
             <span style={{
               color: 'white',
-              opacity: 0.6
-            }}>👥</span>
-            <span style={{
-              color: 'white',
               fontSize: '20px',
               fontFamily: 'Poppins, sans-serif'
-            }}>Friends</span>
-            <span style={{
-              background: 'rgba(156, 166, 237, 0.1)',
-              borderRadius: '12px',
-              padding: '4px 12px',
-              color: '#9CA6ED',
-              fontSize: '14px'
-            }}>46</span>
+            }}>Waiting Room</span>
           </div>
           <div style={{
-            marginLeft: 'auto',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '4px'
-          }}>
-            <div style={{
-              width: '8px',
-              height: '8px',
-              borderRadius: '50%',
-              background: '#4CAF50'
-            }} />
-            <span style={{
-              color: '#9CA6ED',
-              fontSize: '14px'
-            }}>2 ONLINE</span>
-          </div>
+            background: 'rgba(156, 166, 237, 0.1)',
+            borderRadius: '12px',
+            padding: '4px 12px',
+            color: '#9CA6ED',
+            fontSize: '14px',
+            fontFamily: 'Poppins, sans-serif'
+          }}>4/5 Players</div>
         </div>
 
-        {/* Friends list */}
+        {/* Timer */}
+        <Timer />
+
+        {/* Players list */}
         <div style={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '4px'
+          marginTop: '24px'
         }}>
-          {/* Friend item */}
           <div style={{
-            background: 'rgba(13, 16, 48, 0.6)',
-            borderRadius: '12px',
-            padding: '8px 12px',
+            color: '#9CA6ED',
+            fontSize: '14px',
+            fontFamily: 'Poppins, sans-serif',
+            marginBottom: '12px'
+          }}>Players in room</div>
+
+          <div style={{
             display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between'
+            flexDirection: 'column',
+            gap: '4px'
           }}>
+            {/* Player item */}
             <div style={{
+              background: 'rgba(13, 16, 48, 0.6)',
+              borderRadius: '12px',
+              padding: '8px 12px',
               display: 'flex',
               alignItems: 'center',
               gap: '12px'
             }}>
-              {/* Avatar */}
               <div style={{
                 width: '40px',
                 height: '40px',
@@ -107,7 +95,6 @@ export default function FriendsPage() {
                   textAlign: 'center'
                 }}>98 LVL</div>
               </div>
-              {/* Name and level */}
               <div>
                 <div style={{
                   color: 'white',
@@ -121,40 +108,21 @@ export default function FriendsPage() {
                   fontFamily: 'Poppins, sans-serif'
                 }}>98 LVL</div>
               </div>
-            </div>
-            {/* Status */}
-            <div style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '8px'
-            }}>
               <div style={{
-                color: '#9CA6ED',
+                marginLeft: 'auto',
+                background: '#4CAF50',
+                borderRadius: '4px',
+                padding: '2px 8px',
+                color: 'white',
                 fontSize: '12px',
                 fontFamily: 'Poppins, sans-serif'
-              }}>Colorado</div>
-              <div style={{
-                color: '#4CAF50',
-                fontSize: '12px',
-                fontFamily: 'Poppins, sans-serif'
-              }}>Online</div>
-              <div style={{
-                color: '#9CA6ED',
-                fontSize: '12px'
-              }}>+8</div>
+              }}>Ready</div>
             </div>
-          </div>
 
-          {/* More friend items with different statuses */}
-          <div style={{
-            background: 'rgba(13, 16, 48, 0.6)',
-            borderRadius: '12px',
-            padding: '8px 12px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between'
-          }}>
             <div style={{
+              background: 'rgba(13, 16, 48, 0.6)',
+              borderRadius: '12px',
+              padding: '8px 12px',
               display: 'flex',
               alignItems: 'center',
               gap: '12px'
@@ -192,38 +160,21 @@ export default function FriendsPage() {
                   fontFamily: 'Poppins, sans-serif'
                 }}>24 LVL</div>
               </div>
-            </div>
-            <div style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '8px'
-            }}>
               <div style={{
-                color: '#9CA6ED',
+                marginLeft: 'auto',
+                background: '#4CAF50',
+                borderRadius: '4px',
+                padding: '2px 8px',
+                color: 'white',
                 fontSize: '12px',
                 fontFamily: 'Poppins, sans-serif'
-              }}>New Mexico</div>
-              <div style={{
-                color: '#4CAF50',
-                fontSize: '12px',
-                fontFamily: 'Poppins, sans-serif'
-              }}>Online</div>
-              <div style={{
-                color: '#9CA6ED',
-                fontSize: '12px'
-              }}>+2</div>
+              }}>Ready</div>
             </div>
-          </div>
 
-          <div style={{
-            background: 'rgba(13, 16, 48, 0.6)',
-            borderRadius: '12px',
-            padding: '8px 12px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between'
-          }}>
             <div style={{
+              background: 'rgba(13, 16, 48, 0.6)',
+              borderRadius: '12px',
+              padding: '8px 12px',
               display: 'flex',
               alignItems: 'center',
               gap: '12px'
@@ -261,22 +212,67 @@ export default function FriendsPage() {
                   fontFamily: 'Poppins, sans-serif'
                 }}>87 LVL</div>
               </div>
+              <div style={{
+                marginLeft: 'auto',
+                background: '#FF6161',
+                borderRadius: '4px',
+                padding: '2px 8px',
+                color: 'white',
+                fontSize: '12px',
+                fontFamily: 'Poppins, sans-serif'
+              }}>Not Ready</div>
             </div>
+
             <div style={{
+              background: 'rgba(13, 16, 48, 0.6)',
+              borderRadius: '12px',
+              padding: '8px 12px',
               display: 'flex',
               alignItems: 'center',
-              gap: '8px'
+              gap: '12px'
             }}>
               <div style={{
-                color: '#9CA6ED',
-                fontSize: '12px',
-                fontFamily: 'Poppins, sans-serif'
-              }}>Massachusetts</div>
+                width: '40px',
+                height: '40px',
+                borderRadius: '8px',
+                background: '#6C63FF',
+                position: 'relative',
+                overflow: 'hidden'
+              }}>
+                <div style={{
+                  position: 'absolute',
+                  bottom: '0',
+                  left: '0',
+                  right: '0',
+                  background: 'rgba(156, 166, 237, 0.1)',
+                  padding: '1px 4px',
+                  fontSize: '10px',
+                  color: '#FF6161',
+                  textAlign: 'center'
+                }}>91 LVL</div>
+              </div>
+              <div>
+                <div style={{
+                  color: 'white',
+                  fontSize: '14px',
+                  fontFamily: 'Poppins, sans-serif',
+                  marginBottom: '2px'
+                }}>LuckyCharm</div>
+                <div style={{
+                  color: '#FF6161',
+                  fontSize: '12px',
+                  fontFamily: 'Poppins, sans-serif'
+                }}>91 LVL</div>
+              </div>
               <div style={{
-                color: '#9CA6ED',
+                marginLeft: 'auto',
+                background: '#4CAF50',
+                borderRadius: '4px',
+                padding: '2px 8px',
+                color: 'white',
                 fontSize: '12px',
                 fontFamily: 'Poppins, sans-serif'
-              }}>2 min ago</div>
+              }}>Ready</div>
             </div>
           </div>
         </div>
