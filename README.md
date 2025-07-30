@@ -1,5 +1,6 @@
 # HG Game Platform
-
+ pm2 delete all && npm run build && pm2 start npm --name "casino" -- run dev -- -H 0.0.0.0
+ python -m uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload --log-level info
 A modern web application for gaming platform built with Next.js.
 
 ## Features

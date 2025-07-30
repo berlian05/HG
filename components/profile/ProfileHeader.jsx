@@ -1,8 +1,11 @@
 import React from 'react';
 import SettingsIcon from './SettingsIcon';
 import LogoutIcon from './LogoutIcon';
+import useTelegram from '../../hooks/useTelegram';
 
 export default function ProfileHeader() {
+  const { user } = useTelegram();
+
   return (
     <div style={{
       background: 'rgba(13, 16, 48, 0.6)',
@@ -59,22 +62,32 @@ export default function ProfileHeader() {
           borderRadius: '16px',
           background: '#6C63FF',
           marginBottom: '16px',
-          position: 'relative'
+          position: 'relative',
+          overflow: 'hidden'
         }}>
-          {/* Level badge */}
+          {user?.photo_url ? (
+            <img 
+              src={user.photo_url} 
+              alt={user.username || 'User'} 
+              style={{
+                width: '100%',
+                height: '100%',
+                objectFit: 'cover'
+              }}
+            />
+          ) : (
           <div style={{
-            position: 'absolute',
-            bottom: '-8px',
-            left: '50%',
-            transform: 'translateX(-50%)',
-            background: '#9CA6ED',
-            borderRadius: '8px',
-            padding: '2px 8px',
-            fontSize: '12px',
+              width: '100%',
+              height: '100%',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontSize: '36px',
             color: 'white'
           }}>
-            Level 12
+              {user?.username?.[0]?.toUpperCase() || 'U'}
           </div>
+          )}
         </div>
 
         {/* Username */}
@@ -86,7 +99,7 @@ export default function ProfileHeader() {
           WebkitTextFillColor: 'transparent',
           marginBottom: '8px'
         }}>
-          Username
+          {user?.username || 'Username'}
         </div>
 
         {/* Rank */}
@@ -99,7 +112,7 @@ export default function ProfileHeader() {
           gap: '4px'
         }}>
           <span style={{ color: '#9CA6ED' }}>🏆</span>
-          <span style={{ color: '#9CA6ED' }}>Rank 1</span>
+          <span style={{ color: '#9CA6ED' }}>Rank {user?.stats?.games_won || 1}</span>
         </div>
       </div>
     </div>

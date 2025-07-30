@@ -1,0 +1,14 @@
+{
+    "name": "HG Game",
+    "short_name": "HG Game",
+    "description": "Multiplayer game application",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#ffffff",
+    "theme_color": "#000000",
+    "orientation": "portrait",
+    "icons": [],
+    "bot_name": "HGGameBot",
+    "bot_username": "HGGameBot",
+    "bot_token": "7548437053:AAE2VXPfC6_ZuNRbskSz5S1AgypsVE4Fe9I"
+} 

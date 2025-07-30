@@ -1,0 +1,27 @@
+INFO:     Will watch for changes in these directories: ['/root/HG/backend']
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+INFO:     Started reloader process [1272554] using StatReload
+INFO:     Started server process [1272556]
+INFO:     Waiting for application startup.
+2025-07-30 17:16:29,060 - INFO - Connecting to MongoDB...
+2025-07-30 17:16:29,074 - INFO - Successfully connected to MongoDB
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'app/routers/game.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+2025-07-30 17:17:12,952 - INFO - Closing MongoDB connection...
+2025-07-30 17:17:12,953 - INFO - MongoDB connection closed
+INFO:     Application shutdown complete.
+INFO:     Finished server process [1272556]
+INFO:     Started server process [1272759]
+INFO:     Waiting for application startup.
+2025-07-30 17:17:13,649 - INFO - Connecting to MongoDB...
+2025-07-30 17:17:13,653 - INFO - Successfully connected to MongoDB
+INFO:     Application startup complete.
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+2025-07-30 17:17:23,786 - INFO - Closing MongoDB connection...
+2025-07-30 17:17:23,787 - INFO - MongoDB connection closed
+INFO:     Application shutdown complete.
+INFO:     Finished server process [1272759]
+INFO:     Stopping reloader process [1272554]

@@ -6,7 +6,7 @@ import EyeIcon from './EyeIcon';
 import JoinGame from './JoinGame';
 import TimerIcon from './TimerIcon';
 
-export default function GameCardArizona() {
+export default function GameCardArizona({ game }) {
   const commonBlockStyle = {
     display: 'flex',
     justifyContent: 'space-between',
@@ -49,6 +49,29 @@ export default function GameCardArizona() {
     </div>
   );
 
+  // Вычисляем общий банк
+  const totalPrize = game ? game.players.length * 45 : 45;
+  
+  const getGameStatus = () => {
+    if (!game) return 'Waiting...';
+    
+    switch (game.status) {
+      case 'waiting':
+        return `${game.players.length}/6 Players`;
+      case 'in_progress':
+        return 'In Progress';
+      case 'finished':
+        return 'Game Over';
+      default:
+        return 'Waiting...';
+    }
+  };
+
+  const canJoinGame = () => {
+    if (!game) return true; // Можно создать новую игру
+    return game.status === 'waiting' && game.players.length < 6;
+  };
+
   return (
     <div style={{
       background: 'linear-gradient(180deg, #192054 0%, #060C2C 100%)',
@@ -59,6 +82,7 @@ export default function GameCardArizona() {
       maxWidth: 380,
       position: 'relative',
       overflow: 'visible',
+      opacity: canJoinGame() ? 1 : 0.7,
     }}>
       <div style={{
         position: 'absolute',
@@ -108,7 +132,7 @@ export default function GameCardArizona() {
             width: '100%',
           }}>
             <NumberWithHGP number="45" />
-            <NumberWithHGP number="250" />
+            <NumberWithHGP number={totalPrize.toString()} />
           </div>
           <div style={{
             display: 'flex',
@@ -118,9 +142,9 @@ export default function GameCardArizona() {
             paddingTop: 12,
             marginTop: 8,
           }}>
-            <div style={{ color: '#a3a3d1', fontSize: 14 }}>Total Prizes</div>
+            <div style={{ color: '#a3a3d1', fontSize: 14 }}>Entry Cost</div>
             <div style={{ width: 2, height: 20, background: 'rgba(163,163,209,0.18)', borderRadius: 2 }} />
-            <div style={{ color: '#a3a3d1', fontSize: 14 }}>Jackpot</div>
+            <div style={{ color: '#a3a3d1', fontSize: 14 }}>Total Prize</div>
           </div>
         </div>
       </div>
@@ -134,7 +158,7 @@ export default function GameCardArizona() {
           <div style={{ display: 'flex', alignItems: 'center' }}>
             <TimerIcon />
           </div>
-          Instantly
+          {getGameStatus()}
         </div>
         <div style={{ width: 2, height: 28, background: 'rgba(163,163,209,0.18)', borderRadius: 2 }} />
         <div style={{ color: '#b3b3e6', fontSize: 16, display: 'flex', alignItems: 'center', gap: 6 }}>
@@ -156,22 +180,15 @@ export default function GameCardArizona() {
         }}>
           <EyeIcon />
         </div>
-        <div style={{ flex: '1 1 auto', maxWidth: 334, height: 140, marginLeft: 24, position: 'relative' }}>
-          <JoinGame />
-          <button 
-            style={{
-              position: 'absolute',
-              top: 48,
-              left: 48,
-              width: 238,
-              height: 40,
-              background: 'transparent',
-              border: 'none',
-              borderRadius: 20,
-              cursor: 'pointer',
-              zIndex: 10,
-            }}
-          />
+        <div style={{ 
+          flex: '1 1 auto', 
+          position: 'relative', 
+          marginLeft: 24, 
+          height: 140,
+          cursor: 'pointer',
+          zIndex: 5
+        }}>
+          {canJoinGame() && <JoinGame gameId={game?.id} />}
         </div>
       </div>
     </div>

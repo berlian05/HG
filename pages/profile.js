@@ -1,9 +1,22 @@
+import React from 'react';
 import Header from '../components/Header';
 import BottomNavBar from '../components/BottomNavBar';
 import ProfileHeader from '../components/profile/ProfileHeader';
 import ProfileStats from '../components/profile/ProfileStats';
 
+// Добавляем getServerSideProps для серверного рендеринга
+export async function getServerSideProps(context) {
+  return {
+    props: {}, // Будет доступно как props компонента
+  }
+}
+
 export default function Profile() {
+  // Проверяем, что мы на клиенте
+  if (typeof window === 'undefined') {
+    return null; // Не рендерим ничего на сервере
+  }
+
   return (
     <div style={{
       minHeight: '100vh',
