@@ -14,7 +14,24 @@ export default function Home() {
   const [activeGames, setActiveGames] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // Показываем сообщение о загрузке, если загружается пользователь
+  useEffect(() => {
+    const fetchGames = async () => {
+      try {
+        if (!user) return;
+        const games = await getActiveGames();
+        setActiveGames(games);
+      } catch (error) {
+        console.error('Error fetching games:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchGames();
+    const interval = setInterval(fetchGames, 5000);
+    return () => clearInterval(interval);
+  }, [getActiveGames, user]);
+
   if (userLoading) {
     return (
       <div style={{
@@ -26,54 +43,10 @@ export default function Home() {
         color: '#fff',
         fontSize: '18px'
       }}>
-        Loading...
+        Загрузка...
       </div>
     );
   }
-
-  // Показываем сообщение, если пользователь не авторизован
-  if (!user) {
-    return (
-      <div style={{
-        minHeight: '100vh',
-        background: 'linear-gradient(180deg, #0e1330 0%, #1a2046 60%, #18183a 100%)',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        color: '#fff',
-        fontSize: '18px',
-        textAlign: 'center',
-        padding: '20px'
-      }}>
-        Please open this app in Telegram
-      </div>
-    );
-  }
-
-  useEffect(() => {
-    const fetchGames = async () => {
-      try {
-        if (!user) {
-          console.log('Home: Waiting for user data...');
-          return;
-        }
-        console.log('Home: Fetching active games...');
-        const games = await getActiveGames();
-        console.log('Home: Received games:', games);
-        setActiveGames(games);
-      } catch (error) {
-        console.error('Home: Error fetching games:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchGames();
-    // Обновляем список каждые 5 секунд
-    const interval = setInterval(fetchGames, 5000);
-
-    return () => clearInterval(interval);
-  }, [getActiveGames, user]);
 
   return (
     <div style={{
@@ -87,6 +60,7 @@ export default function Home() {
       paddingTop: 92
     }}>
       <Header />
+
       <Tabs />
       <SearchBar />
       <div style={{ height: 24 }} />
@@ -94,18 +68,19 @@ export default function Home() {
       <div style={{ height: 24 }} />
       {!loading && (
         <>
-          {activeGames.map(game => (
-            <div key={game.id}>
-              <GameCardArizona game={game} />
-      <div style={{ height: 24 }} />
-            </div>
-          ))}
-          {activeGames.length === 0 && (
-      <GameCardArizona />
+          {activeGames.length > 0 ? (
+            activeGames.map(game => (
+              <div key={game.id}>
+                <GameCardArizona game={game} />
+                <div style={{ height: 24 }} />
+              </div>
+            ))
+          ) : (
+            <GameCardArizona />
           )}
         </>
       )}
       <BottomNavBar />
     </div>
   );
-} 
+}

@@ -52,6 +52,9 @@ export default function GameCardArizona({ game }) {
   // Вычисляем общий банк
   const totalPrize = game ? game.players.length * 45 : 45;
   
+  // Для завершенных игр показываем фиксированную сумму
+  const displayPrize = game && game.status === 'finished' ? 270 : totalPrize; // 6 игроков * 45 HGP
+  
   const getGameStatus = () => {
     if (!game) return 'Waiting...';
     
@@ -61,15 +64,116 @@ export default function GameCardArizona({ game }) {
       case 'in_progress':
         return 'In Progress';
       case 'finished':
-        return 'Game Over';
+        return game.winner_id ? 'Winner!' : 'Game Over';
       default:
         return 'Waiting...';
+    }
+  };
+
+  const getStatusColor = () => {
+    if (!game) return '#b3b3e6';
+    
+    switch (game.status) {
+      case 'waiting':
+        return '#4CAF50'; // Зеленый для ожидания
+      case 'in_progress':
+        return '#FF9800'; // Оранжевый для процесса
+      case 'finished':
+        return '#F44336'; // Красный для завершенной
+      default:
+        return '#b3b3e6';
     }
   };
 
   const canJoinGame = () => {
     if (!game) return true; // Можно создать новую игру
     return game.status === 'waiting' && game.players.length < 6;
+  };
+
+  const getCardOpacity = () => {
+    if (!game) return 1;
+    if (game.status === 'finished') return 0.5; // Завершенные игры более прозрачные
+    if (game.status === 'in_progress') return 0.7; // Игры в процессе
+    return 1; // Игры в ожидании
+  };
+
+  const getGameInfo = () => {
+    if (!game) {
+      // Нет игры - показываем кнопку создания новой игры
+      return <JoinGame gameId={undefined} />;
+    }
+    
+    if (game.status === 'in_progress') {
+      return (
+        <div style={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          height: '100%',
+          color: '#b3b3e6',
+          fontSize: 16,
+          textAlign: 'center',
+          gap: 8
+        }}>
+          <div>🎮 Игра в процессе</div>
+          <div style={{ fontSize: 14, color: '#a3a3d1' }}>
+            Присоединиться нельзя
+          </div>
+        </div>
+      );
+    }
+    
+    if (game.status === 'finished') {
+      return (
+        <div style={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          height: '100%',
+          color: '#b3b3e6',
+          fontSize: 16,
+          textAlign: 'center',
+          gap: 8
+        }}>
+          <div>🏆 Игра завершена</div>
+          {game.winner_id && (
+            <div style={{ fontSize: 14, color: '#FFD700' }}>
+              Победитель определен!
+            </div>
+          )}
+          <div style={{ fontSize: 14, color: '#a3a3d1', marginTop: 8 }}>
+            Создать новую игру
+          </div>
+          <button
+            onClick={() => {
+              // Здесь можно добавить навигацию к результатам игры
+              console.log('View game results:', game.id);
+            }}
+            style={{
+              background: 'rgba(255, 215, 0, 0.2)',
+              border: '1px solid rgba(255, 215, 0, 0.5)',
+              borderRadius: 8,
+              padding: '8px 16px',
+              color: '#FFD700',
+              fontSize: 12,
+              cursor: 'pointer',
+              marginTop: 8
+            }}
+          >
+            Посмотреть результаты
+          </button>
+        </div>
+      );
+    }
+    
+    if (game.status === 'waiting') {
+      return <JoinGame gameId={game.id} />;
+    }
+    
+    // Для любых других статусов показываем кнопку создания новой
+    return <JoinGame gameId={undefined} />;
   };
 
   return (
@@ -82,7 +186,7 @@ export default function GameCardArizona({ game }) {
       maxWidth: 380,
       position: 'relative',
       overflow: 'visible',
-      opacity: canJoinGame() ? 1 : 0.7,
+      opacity: getCardOpacity(),
     }}>
       <div style={{
         position: 'absolute',
@@ -132,7 +236,7 @@ export default function GameCardArizona({ game }) {
             width: '100%',
           }}>
             <NumberWithHGP number="45" />
-            <NumberWithHGP number={totalPrize.toString()} />
+            <NumberWithHGP number={displayPrize.toString()} />
           </div>
           <div style={{
             display: 'flex',
@@ -158,12 +262,14 @@ export default function GameCardArizona({ game }) {
           <div style={{ display: 'flex', alignItems: 'center' }}>
             <TimerIcon />
           </div>
-          {getGameStatus()}
+          <span style={{ color: getStatusColor() }}>
+            {getGameStatus()}
+          </span>
         </div>
         <div style={{ width: 2, height: 28, background: 'rgba(163,163,209,0.18)', borderRadius: 2 }} />
         <div style={{ color: '#b3b3e6', fontSize: 16, display: 'flex', alignItems: 'center', gap: 6 }}>
           <Image src="/images/Random game/Mobile/Iconly/Bulk/Time-Circle.svg" alt="sec" width={20} height={20} />
-          10 sec
+          {game && game.status === 'finished' ? 'Completed' : '10 sec'}
         </div>
       </div>
       <div style={{ marginTop: 24, display: 'flex', alignItems: 'center', gap: 8, position: 'relative' }}>
@@ -188,9 +294,10 @@ export default function GameCardArizona({ game }) {
           cursor: 'pointer',
           zIndex: 5
         }}>
-          {canJoinGame() && <JoinGame gameId={game?.id} />}
+          {/* Показываем соответствующую информацию в зависимости от статуса игры */}
+          {getGameInfo()}
         </div>
       </div>
     </div>
   );
-} 
+}

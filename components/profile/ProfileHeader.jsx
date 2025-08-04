@@ -1,10 +1,10 @@
 import React from 'react';
 import SettingsIcon from './SettingsIcon';
 import LogoutIcon from './LogoutIcon';
-import useTelegram from '../../hooks/useTelegram';
+import useSimpleAuth from '../../hooks/useSimpleAuth';
 
 export default function ProfileHeader() {
-  const { user } = useTelegram();
+  const { user } = useSimpleAuth();
 
   return (
     <div style={{
@@ -117,4 +117,4 @@ export default function ProfileHeader() {
       </div>
     </div>
   );
-} 
+}

@@ -1,161 +1,105 @@
 import { useState, useEffect } from 'react';
-
-const API_URL = 'http://localhost:8000';
+import { API_URL } from '../config';
 
 export default function useTelegram() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const initTelegram = async () => {
       try {
-        // В режиме разработки используем тестового пользователя
-        if (process.env.NODE_ENV === 'development') {
-          console.log('Development mode: using test user');
-          const debugUser = {
-            id: 123456789,
-            first_name: "Test",
-            username: "testuser",
-            language_code: "ru"
-          };
+        console.log('Starting Telegram initialization...');
+        console.log('API_URL:', API_URL);
+        
+        setLoading(true);
+        setError(null);
 
-          const response = await fetch(`${API_URL}/auth/tma-login?init_data=${encodeURIComponent(JSON.stringify({
-            user: debugUser,
-            auth_date: Math.floor(Date.now() / 1000),
-            hash: 'debug_hash'
-          }))}`, {
-            method: 'POST'
-          });
-
-          if (response.ok) {
-            const data = await response.json();
-            localStorage.setItem('token', data.token);
-            setUser(data.user);
-          }
-          setLoading(false);
-          return;
-        }
-
-        // Проверяем, есть ли Telegram WebApp
-        if (!window.Telegram?.WebApp) {
-          console.log('Telegram WebApp not found');
+        // Получаем данные от Telegram WebApp
+        const urlParams = new URLSearchParams(window.location.search);
+        const initData = urlParams.get('initData');
+        
+        console.log('=== TELEGRAM WEBAPP DATA ===');
+        console.log('URL params:', window.location.search);
+        console.log('initData param:', initData);
+        console.log('window.Telegram?.WebApp:', window.Telegram?.WebApp);
+        console.log('window.Telegram?.WebApp.initData:', window.Telegram?.WebApp?.initData);
+        console.log('window.Telegram?.WebApp.initDataUnsafe:', window.Telegram?.WebApp?.initDataUnsafe);
+        console.log('window.Telegram?.WebApp.user:', window.Telegram?.WebApp?.user);
+        console.log('=== END TELEGRAM DATA ===');
+        
+        let response;
+        
+        // Проверяем, есть ли данные от Telegram WebApp
+        if (window.Telegram?.WebApp?.user) {
+          console.log('Found real Telegram WebApp user data');
+          const tgUser = window.Telegram.WebApp.user;
+          const tgInitData = window.Telegram.WebApp.initData;
           
-          // Проверяем, есть ли параметры в URL
-          const urlParams = new URLSearchParams(window.location.search);
-          const tgWebAppData = urlParams.get('tgWebAppData');
-          const tgWebAppUser = urlParams.get('tgWebAppUser');
+          console.log('Real Telegram user:', tgUser);
+          console.log('Real Telegram initData:', tgInitData);
           
-          console.log('URL params:', urlParams.toString());
-          console.log('tgWebAppData:', tgWebAppData);
-          console.log('tgWebAppUser:', tgWebAppUser);
-          
-          if (tgWebAppData || tgWebAppUser) {
-            console.log('Found Telegram data in URL params');
-            // Используем данные из URL
-            const userData = tgWebAppUser ? JSON.parse(decodeURIComponent(tgWebAppUser)) : null;
-            
-            if (userData) {
-              const response = await fetch(`${API_URL}/auth/tma-login?init_data=${encodeURIComponent(JSON.stringify({
-                user: userData,
+          // Отправляем реальные данные от Telegram на бэкенд
+          response = await fetch(`${API_URL}/auth/tma-login`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': 'application/json'
+            },
+            body: JSON.stringify({
+              init_data: {
+                user: tgUser,
                 auth_date: Math.floor(Date.now() / 1000),
-                hash: 'debug_hash'
-              }))}`, {
-                method: 'POST'
-              });
-
-              if (response.ok) {
-                const data = await response.json();
-                localStorage.setItem('token', data.token);
-                setUser(data.user);
+                hash: tgInitData || 'real_telegram_hash'
               }
-            }
-          } else {
-            // Используем тестового пользователя в продакшене для отладки
-            console.log('Using test user in production for debugging');
-            const debugUser = {
-              id: 123456789,
-              first_name: "Test",
-              username: "testuser",
-              language_code: "ru"
-            };
-
-            const response = await fetch(`${API_URL}/auth/tma-login?init_data=${encodeURIComponent(JSON.stringify({
-              user: debugUser,
-              auth_date: Math.floor(Date.now() / 1000),
-              hash: 'debug_hash'
-            }))}`, {
-              method: 'POST'
-            });
-
-            if (response.ok) {
-              const data = await response.json();
-              localStorage.setItem('token', data.token);
-              setUser(data.user);
-            }
-          }
-          
-          setLoading(false);
-          return;
-        }
-
-        // Инициализируем WebApp
-        console.log('Initializing Telegram WebApp');
-        window.Telegram.WebApp.ready();
-        console.log('WebApp initialized');
-
-        // Получаем данные из WebApp
-        const webAppData = window.Telegram.WebApp.initData;
-        const webAppUser = window.Telegram.WebApp.initDataUnsafe?.user;
-
-        console.log('WebApp initData:', webAppData);
-        console.log('WebApp initDataUnsafe:', window.Telegram.WebApp.initDataUnsafe);
-        console.log('WebApp user:', webAppUser);
-
-        // Если нет данных пользователя, используем тестового пользователя
-        if (!webAppUser) {
-          console.log('No user data in WebApp, using test user');
-          const debugUser = {
-            id: 123456789,
-            first_name: "Test",
-            username: "testuser",
-            language_code: "ru"
-          };
-
-          const response = await fetch(`${API_URL}/auth/tma-login?init_data=${encodeURIComponent(JSON.stringify({
-            user: debugUser,
-            auth_date: Math.floor(Date.now() / 1000),
-            hash: 'debug_hash'
-          }))}`, {
-            method: 'POST'
+            })
           });
-
-          if (response.ok) {
-            const data = await response.json();
-            localStorage.setItem('token', data.token);
-            setUser(data.user);
-          }
-          setLoading(false);
-          return;
-        }
-
-        // Отправляем данные на бэкенд
-        const response = await fetch(`${API_URL}/auth/tma-login?init_data=${encodeURIComponent(webAppData || JSON.stringify({
-          user: webAppUser,
-          auth_date: Math.floor(Date.now() / 1000),
-          hash: 'debug_hash'
-        }))}`, {
-          method: 'POST'
-        });
-
-        if (response.ok) {
-          const data = await response.json();
-          localStorage.setItem('token', data.token);
-          setUser(data.user);
+        } else if (initData) {
+          console.log('Found initData in URL:', initData);
+          
+          // Декодируем данные от Telegram
+          const decodedData = JSON.parse(decodeURIComponent(initData));
+          console.log('Decoded initData:', decodedData);
+          
+          // Отправляем данные от Telegram на бэкенд
+          response = await fetch(`${API_URL}/auth/tma-login`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': 'application/json'
+            },
+            body: JSON.stringify({
+              init_data: decodedData
+            })
+          });
         } else {
-          console.error('Auth failed:', await response.text());
+          console.error('No Telegram WebApp data found!');
+          throw new Error('Telegram WebApp data not available. Please open this app from Telegram bot.');
         }
-      } catch (error) {
-        console.error('Error in TMA init:', error);
+
+        console.log('Auth response status:', response.status);
+        console.log('Auth response headers:', Object.fromEntries(response.headers.entries()));
+        
+        const responseText = await response.text();
+        console.log('Raw response:', responseText);
+
+        if (!response.ok) {
+          console.error('Auth error:', responseText);
+          throw new Error(`Ошибка авторизации: ${responseText}`);
+        }
+
+        const data = JSON.parse(responseText);
+        console.log('Auth success:', data);
+        
+        // Сохраняем токен
+        localStorage.setItem('token', data.access_token);
+        
+        // Сохраняем данные пользователя
+        setUser(data.user);
+
+      } catch (err) {
+        console.error('Auth error:', err);
+        setError(err.message);
       } finally {
         setLoading(false);
       }
@@ -164,5 +108,11 @@ export default function useTelegram() {
     initTelegram();
   }, []);
 
-  return { user, loading };
+  // Функция для логаута
+  const logout = () => {
+    localStorage.removeItem('token');
+    setUser(null);
+  };
+
+  return { user, loading, error, logout };
 }

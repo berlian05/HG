@@ -1,8 +1,8 @@
 import React from 'react';
-import useTelegram from '../../hooks/useTelegram';
+import useSimpleAuth from '../../hooks/useSimpleAuth';
 
 export default function ProfileStats() {
-  const { user } = useTelegram();
+  const { user } = useSimpleAuth();
 
   return (
       <div style={{
@@ -106,4 +106,4 @@ export default function ProfileStats() {
       </div>
     </div>
   );
-} 
+}

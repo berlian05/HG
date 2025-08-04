@@ -33,6 +33,7 @@ class GameState(BaseModel):
     total_pot: float = 0.0
     total_bets_initial: int = 0
     total_bets_remaining: int = 0
+    current_bet: float = 0.0  # Добавляем поле current_bet
     round_started_at: Optional[datetime] = None
     round_ends_at: Optional[datetime] = None
     waiting_started_at: Optional[datetime] = None
@@ -53,6 +54,36 @@ class GameModel(BaseModel):
     started_at: Optional[datetime] = None
     finished_at: Optional[datetime] = None
     winner_id: Optional[str] = None
+
+    def to_dict(self):
+        """Сериализует игру в словарь с правильной обработкой datetime"""
+        data = self.dict()
+        # Преобразуем datetime объекты в строки
+        if data.get('created_at'):
+            data['created_at'] = data['created_at'].isoformat()
+        if data.get('started_at'):
+            data['started_at'] = data['started_at'].isoformat()
+        if data.get('finished_at'):
+            data['finished_at'] = data['finished_at'].isoformat()
+        
+        # Обрабатываем datetime в state
+        if data.get('state'):
+            state = data['state']
+            if state.get('round_started_at'):
+                state['round_started_at'] = state['round_started_at'].isoformat()
+            if state.get('round_ends_at'):
+                state['round_ends_at'] = state['round_ends_at'].isoformat()
+            if state.get('waiting_started_at'):
+                state['waiting_started_at'] = state['waiting_started_at'].isoformat()
+            if state.get('waiting_ends_at'):
+                state['waiting_ends_at'] = state['waiting_ends_at'].isoformat()
+        
+        # Обрабатываем datetime в players
+        for player in data.get('players', []):
+            if player.get('last_bet_at'):
+                player['last_bet_at'] = player['last_bet_at'].isoformat()
+        
+        return data
 
     class Config:
         populate_by_name = True

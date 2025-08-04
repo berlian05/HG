@@ -127,14 +127,44 @@ class GameService:
             if player_index is None:
                 raise ValueError("Player not in game")
 
+            # Если игрок становится готовым и еще не платил вступительный взнос
+            if is_ready and not game.players[player_index].is_ready:
+                # Проверяем баланс игрока
+                user_data = await db.users.find_one({"_id": ObjectId(user_id)})
+                if not user_data:
+                    raise ValueError("User not found")
+                
+                # Получаем баланс с значением по умолчанию 1000 HGP
+                user_stats = user_data.get('stats', {})
+                user_balance = user_stats.get('balance', 1000.0)  # По умолчанию 1000 HGP
+                
+                # Если баланс отрицательный, устанавливаем его в 0
+                if user_balance < 0:
+                    user_balance = 0
+                    # Обновляем баланс в базе данных
+                    await db.users.update_one(
+                        {"_id": ObjectId(user_id)},
+                        {"$set": {"stats.balance": 0}}
+                    )
+                    logger.info(f"Reset negative balance to 0 for user {user_id}")
+                
+                if user_balance < game.entry_cost:
+                    raise ValueError(f"Insufficient balance. Required: {game.entry_cost} HGP, Available: {user_balance} HGP")
+                
+                # Списываем вступительный взнос
+                await db.users.update_one(
+                    {"_id": ObjectId(user_id)},
+                    {"$inc": {"stats.balance": -game.entry_cost}}
+                )
+                logger.info(f"Deducted {game.entry_cost} HGP from user {user_id}")
+
             # Обновляем статус готовности
             game.players[player_index].is_ready = is_ready
 
-            # Проверяем, все ли игроки готовы
-            all_ready = all(p.is_ready for p in game.players)
-            enough_players = len(game.players) >= game.min_players
+            # Проверяем, есть ли готовые игроки
+            any_ready = any(p.is_ready for p in game.players)
 
-            if all_ready and enough_players:
+            if any_ready:
                 # Начинаем игру
                 game.status = GameStatus.IN_PROGRESS
                 game.started_at = datetime.utcnow()
@@ -145,7 +175,7 @@ class GameService:
                 # Инициализируем состояние игры
                 game.state.round_started_at = datetime.utcnow()
                 game.state.round_ends_at = datetime.utcnow() + timedelta(seconds=10)
-                game.state.current_bet = game.min_bet
+                game.state.current_bet = game.entry_cost
                 
                 # Запускаем таймер раунда
                 await GameService._start_round_timer(game_id)
@@ -273,6 +303,38 @@ class GameService:
             return [GameModel(**{**g, 'id': str(g['_id'])}) for g in games]
         except Exception as e:
             logger.error(f"Error getting active games: {e}")
+            raise
+
+    @staticmethod
+    async def get_finished_games(limit: int = 10) -> list[GameModel]:
+        """Получает список завершенных игр"""
+        try:
+            db = get_database()
+            games = await db.games.find({
+                "status": GameStatus.FINISHED
+            }).sort("finished_at", -1).limit(limit).to_list(length=limit)
+            return [GameModel(**{**g, 'id': str(g['_id'])}) for g in games]
+        except Exception as e:
+            logger.error(f"Error getting finished games: {e}")
+            raise
+
+    @staticmethod
+    async def get_current_user_game(user_id: str) -> GameModel:
+        """Получает текущую игру пользователя"""
+        try:
+            db = get_database()
+            # Ищем игру, где пользователь участвует и игра активна
+            game_data = await db.games.find_one({
+                "status": {"$in": [GameStatus.WAITING, GameStatus.IN_PROGRESS]},
+                "players.user_id": user_id
+            })
+            
+            if not game_data:
+                return None
+                
+            return GameModel(**{**game_data, 'id': str(game_data['_id'])})
+        except Exception as e:
+            logger.error(f"Error getting current user game: {e}")
             raise
 
     @staticmethod
@@ -443,13 +505,13 @@ class GameService:
 
             # Проверяем количество готовых игроков
             ready_players = [p for p in game.players if p.is_ready]
-            if len(ready_players) >= game.min_players:
+            if len(ready_players) >= 1:  # Игра начинается даже с одним готовым игроком
                 # Начинаем игру
                 game.status = GameStatus.IN_PROGRESS
                 game.started_at = datetime.utcnow()
                 game.state.round_started_at = datetime.utcnow()
                 game.state.round_ends_at = datetime.utcnow() + timedelta(seconds=10)
-                game.state.current_bet = game.min_bet
+                game.state.current_bet = game.entry_cost
 
                 # Обновляем в БД
                 await db.games.update_one(
@@ -498,19 +560,24 @@ class GameService:
             # Обновляем статистику победителя
             winner = next((p for p in game.players if p.user_id == winner_id), None)
             if winner:
+                # Вычисляем общий приз (сумма всех вступительных взносов)
+                total_prize = len(game.players) * game.entry_cost
+                
                 # Обновляем статистику в игре
                 winner.stats["games_won"] += 1
-                winner.stats["total_earnings"] += len(game.players) * 45  # Фиксированная сумма за игру
+                winner.stats["total_earnings"] += total_prize
                 
                 # Обновляем статистику в профиле
                 await db.users.update_one(
                     {"_id": ObjectId(winner_id)},
                     {"$inc": {
                         "stats.games_won": 1,
-                        "stats.total_earnings": len(game.players) * 45,
+                        "stats.total_earnings": total_prize,
+                        "stats.balance": total_prize,  # Начисляем приз на баланс
                         "stats.current_rating": 50  # Увеличиваем рейтинг за победу
                     }}
                 )
+                logger.info(f"Winner {winner_id} received {total_prize} HGP prize")
 
             # Обновляем статистику всех игроков
             for player in game.players:
@@ -547,8 +614,8 @@ class GameService:
                 }}
             )
 
-            # Сбрасываем игру через 5 секунд
-            asyncio.create_task(GameService._delayed_reset(game_id))
+            # Убираем автоматический сброс - пусть игра остается завершенной
+            # asyncio.create_task(GameService._delayed_reset(game_id))
 
         except Exception as e:
             logger.error(f"Error ending round: {e}")

@@ -51,7 +51,16 @@ export default function WaitingRoom() {
   }
 
   // Находим текущего игрока
-  const currentPlayer = game.players.find(p => p.user_id === user?.id);
+  console.log('Debug - User:', user);
+  console.log('Debug - Game players:', game.players);
+  console.log('Debug - Looking for user ID:', user?.id);
+  
+  const currentPlayer = game.players.find(p => {
+    console.log('Debug - Comparing:', p.user_id, 'with', user?.id);
+    return p.user_id === user?.id || p.user_id === user?.telegram_id;
+  });
+  
+  console.log('Debug - Current player found:', currentPlayer);
 
   // Обработчик кнопки готовности
   const handleReadyClick = async () => {
@@ -98,8 +107,19 @@ export default function WaitingRoom() {
             padding: '4px 12px',
             color: '#9CA6ED',
             fontSize: '14px',
-            fontFamily: 'Poppins, sans-serif'
-          }}>{game.players.length}/6 Players</div>
+            fontFamily: 'Poppins, sans-serif',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px'
+          }}>
+            <span>{game.players.length}/6 Players</span>
+            <span style={{
+              color: '#4CAF50',
+              fontWeight: '600'
+            }}>
+              ({game.players.filter(p => p.is_ready).length} ready)
+            </span>
+          </div>
         </div>
 
         {/* Timer */}
@@ -120,8 +140,33 @@ export default function WaitingRoom() {
           </div>
         )}
 
+        {/* Any player ready notification */}
+        {game.players.some(p => p.is_ready) && (
+          <div style={{
+            background: 'rgba(76, 175, 80, 0.1)',
+            borderRadius: '12px',
+            padding: '8px 16px',
+            color: '#4CAF50',
+            fontSize: '14px',
+            fontFamily: 'Poppins, sans-serif',
+            marginBottom: '16px',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px'
+          }}>
+            <div style={{
+              width: '8px',
+              height: '8px',
+              borderRadius: '50%',
+              background: '#4CAF50',
+              animation: 'pulse 1s infinite'
+            }} />
+            Player is ready! Game will start soon...
+          </div>
+        )}
+
         {/* Ready button */}
-        {currentPlayer && (
+        {currentPlayer ? (
           <div style={{
             marginBottom: '24px',
             display: 'flex',
@@ -130,21 +175,98 @@ export default function WaitingRoom() {
             <button
               onClick={handleReadyClick}
               style={{
-                background: currentPlayer.is_ready ? '#4CAF50' : '#FF6161',
+                background: currentPlayer.is_ready 
+                  ? 'linear-gradient(135deg, #FF8A00 0%, #FFB800 100%)' 
+                  : 'linear-gradient(135deg, #FF6161 0%, #e74c3c 100%)',
                 border: 'none',
-                borderRadius: '12px',
-                padding: '12px 24px',
+                borderRadius: '20px',
+                padding: '20px 40px',
                 color: 'white',
-                fontSize: '16px',
+                fontSize: '20px',
                 fontFamily: 'Poppins, sans-serif',
+                fontWeight: '700',
                 cursor: 'pointer',
-                transition: 'all 0.2s ease'
+                transition: 'all 0.3s ease',
+                boxShadow: currentPlayer.is_ready 
+                  ? '0 8px 25px rgba(255, 138, 0, 0.4)' 
+                  : '0 8px 25px rgba(255, 97, 97, 0.4)',
+                transform: 'translateY(0)',
+                minWidth: '180px',
+                position: 'relative',
+                overflow: 'hidden',
+                textTransform: 'uppercase',
+                letterSpacing: '1px'
+              }}
+              onMouseEnter={(e) => {
+                e.target.style.transform = 'translateY(-3px)';
+                e.target.style.boxShadow = currentPlayer.is_ready 
+                  ? '0 12px 35px rgba(255, 138, 0, 0.5)' 
+                  : '0 12px 35px rgba(255, 97, 97, 0.5)';
+              }}
+              onMouseLeave={(e) => {
+                e.target.style.transform = 'translateY(0)';
+                e.target.style.boxShadow = currentPlayer.is_ready 
+                  ? '0 8px 25px rgba(255, 138, 0, 0.4)' 
+                  : '0 8px 25px rgba(255, 97, 97, 0.4)';
               }}
             >
-              {currentPlayer.is_ready ? 'Ready' : 'Not Ready'}
+              <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '8px'
+              }}>
+                <div style={{
+                  width: '12px',
+                  height: '12px',
+                  borderRadius: '50%',
+                  background: 'rgba(255, 255, 255, 0.8)',
+                  animation: currentPlayer.is_ready ? 'pulse 2s infinite' : 'none'
+                }} />
+                {currentPlayer.is_ready ? 'READY!' : 'NOT READY'}
+              </div>
             </button>
           </div>
+        ) : (
+          <div style={{
+            marginBottom: '24px',
+            display: 'flex',
+            justifyContent: 'center',
+            flexDirection: 'column',
+            alignItems: 'center',
+            gap: '12px'
+          }}>
+            <div style={{
+              background: 'rgba(255, 97, 97, 0.1)',
+              borderRadius: '12px',
+              padding: '12px 16px',
+              color: '#FF6161',
+              fontSize: '14px',
+              fontFamily: 'Poppins, sans-serif',
+              textAlign: 'center'
+            }}>
+              Debug: Player not found in game
+            </div>
+            <div style={{
+              color: '#9CA6ED',
+              fontSize: '12px',
+              fontFamily: 'Poppins, sans-serif',
+              textAlign: 'center'
+            }}>
+              User ID: {user?.id || 'undefined'}<br/>
+              Telegram ID: {user?.telegram_id || 'undefined'}<br/>
+              Players in game: {game.players.map(p => p.user_id).join(', ')}
+            </div>
+          </div>
         )}
+
+        <style jsx>{`
+          @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+          }
+        `}</style>
 
         {/* Players list */}
         <div style={{
@@ -190,17 +312,7 @@ export default function WaitingRoom() {
                       }}
                     />
                   )}
-                <div style={{
-                  position: 'absolute',
-                  bottom: '0',
-                  left: '0',
-                  right: '0',
-                  background: 'rgba(156, 166, 237, 0.1)',
-                  padding: '1px 4px',
-                  fontSize: '10px',
-                    color: player.is_ready ? '#4CAF50' : '#FF6161',
-                  textAlign: 'center'
-                  }}>{Math.floor(player.stats?.current_rating / 100) || '1'} LVL</div>
+
               </div>
               <div>
                 <div style={{
@@ -212,21 +324,36 @@ export default function WaitingRoom() {
                     {player.username}
                     {player.user_id === user?.id && ' (You)'}
               </div>
-              <div style={{
-                    color: player.is_ready ? '#4CAF50' : '#FF6161',
-                fontSize: '12px',
-                fontFamily: 'Poppins, sans-serif'
-                  }}>{Math.floor(player.stats?.current_rating / 100) || '1'} LVL</div>
+
               </div>
               <div style={{
                 marginLeft: 'auto',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px'
+              }}>
+                <div style={{
+                  width: '8px',
+                  height: '8px',
+                  borderRadius: '50%',
                   background: player.is_ready ? '#4CAF50' : '#FF6161',
-                borderRadius: '4px',
-                padding: '2px 8px',
+                  boxShadow: player.is_ready 
+                    ? '0 0 8px rgba(76, 175, 80, 0.6)' 
+                    : '0 0 8px rgba(255, 97, 97, 0.6)',
+                  animation: player.is_ready ? 'pulse 2s infinite' : 'none'
+                }} />
+                <span style={{
+                  background: player.is_ready 
+                    ? 'linear-gradient(135deg, #4CAF50 0%, #45a049 100%)' 
+                    : 'linear-gradient(135deg, #FF6161 0%, #e74c3c 100%)',
+                  borderRadius: '6px',
+                  padding: '3px 8px',
                   color: 'white',
-                  fontSize: '12px',
-                  fontFamily: 'Poppins, sans-serif'
-                }}>{player.is_ready ? 'Ready' : 'Not Ready'}</div>
+                  fontSize: '11px',
+                  fontFamily: 'Poppins, sans-serif',
+                  fontWeight: '500'
+                }}>{player.is_ready ? 'Ready' : 'Not Ready'}</span>
+              </div>
               </div>
             ))}
           </div>

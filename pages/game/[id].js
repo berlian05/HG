@@ -1,7 +1,7 @@
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import useGame from '../../hooks/useGame';
-import useTelegram from '../../hooks/useTelegram';
+import useTestAuth from '../../hooks/useTestAuth';
 import BetButton from '../../components/game/BetButton';
 import CircleTimer from '../../components/game/CircleTimer';
 import PlayersList from '../../components/game/PlayersList';
@@ -11,7 +11,7 @@ import BottomNavBar from '../../components/BottomNavBar';
 export default function GameRoom() {
   const router = useRouter();
   const { id } = router.query;
-  const { user } = useTelegram();
+  const { user, loading: userLoading } = useTestAuth();
   const {
     game,
     error,
@@ -21,18 +21,75 @@ export default function GameRoom() {
     fold
   } = useGame(id);
 
-  if (loading) return <div>Loading...</div>;
-  if (error) return <div>Error: {error}</div>;
-  if (!game) return <div>Game not found</div>;
+  if (userLoading || loading) {
+    return (
+      <div style={{
+        minHeight: '100vh',
+        background: 'linear-gradient(180deg, #0e1330 0%, #1a2046 60%, #18183a 100%)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        color: '#fff'
+      }}>
+        Загрузка...
+      </div>
+    );
+  }
 
-  const currentPlayer = user ? game.players.find(p => p.user_id === user.id) : null;
+  if (error) {
+    return (
+      <div style={{
+        minHeight: '100vh',
+        background: 'linear-gradient(180deg, #0e1330 0%, #1a2046 60%, #18183a 100%)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        color: '#fff'
+      }}>
+        Ошибка: {error}
+      </div>
+    );
+  }
+
+  if (!game) {
+    return (
+      <div style={{
+        minHeight: '100vh',
+        background: 'linear-gradient(180deg, #0e1330 0%, #1a2046 60%, #18183a 100%)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        color: '#fff'
+      }}>
+        Игра не найдена
+      </div>
+    );
+  }
+
+  const currentPlayer = game.players.find(p => p.user_id === user.id);
 
   return (
     <div className="flex flex-col min-h-screen bg-[#0F1225]">
       <Header />
       
+      {/* Debug Panel */}
+      <div style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        background: 'rgba(0,0,0,0.8)',
+        color: 'white',
+        padding: '10px',
+        zIndex: 1000,
+        fontSize: '14px'
+      }}>
+        <div>User: {user?.username}</div>
+        <div>Game ID: {id}</div>
+        <div>Connected: {connected ? 'Yes' : 'No'}</div>
+      </div>
+
       <main className="flex-1 px-4 py-8">
-        {/* Информация о ставках */}
         <div style={{
           textAlign: 'center',
           color: '#9CA6ED',
@@ -43,7 +100,6 @@ export default function GameRoom() {
           Bets remaining - {game.state.total_bets_remaining} of {game.state.total_bets_initial}
         </div>
 
-        {/* Таймер */}
         <div className="flex justify-center items-center mb-8">
           <CircleTimer
             initialTime={10}
@@ -51,13 +107,11 @@ export default function GameRoom() {
           />
         </div>
 
-        {/* Список игроков */}
         <PlayersList
           players={game.players}
-          currentUserId={user?.id}
+          currentUserId={user.id}
         />
 
-        {/* Кнопка ставки */}
         {currentPlayer && currentPlayer.is_active && (
           <div className="mt-8">
             <BetButton
@@ -69,7 +123,6 @@ export default function GameRoom() {
           </div>
         )}
 
-        {/* Банк */}
         <div style={{
           textAlign: 'center',
           marginTop: '24px',
@@ -84,4 +137,4 @@ export default function GameRoom() {
       <BottomNavBar />
     </div>
   );
-} 
+}

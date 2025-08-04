@@ -1,27 +1,99 @@
 INFO:     Will watch for changes in these directories: ['/root/HG/backend']
 INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
-INFO:     Started reloader process [1272554] using StatReload
-INFO:     Started server process [1272556]
+INFO:     Started reloader process [2145365] using StatReload
+INFO:     Started server process [2145368]
 INFO:     Waiting for application startup.
-2025-07-30 17:16:29,060 - INFO - Connecting to MongoDB...
-2025-07-30 17:16:29,074 - INFO - Successfully connected to MongoDB
+2025-08-02 15:24:38,088 - INFO - Connecting to MongoDB...
+2025-08-02 15:24:38,093 - INFO - Successfully connected to MongoDB
 INFO:     Application startup complete.
-WARNING:  StatReload detected changes in 'app/routers/game.py'. Reloading...
+2025-08-02 15:25:09,452 - INFO - === Starting TMA login process ===
+2025-08-02 15:25:09,452 - DEBUG - Client IP: 127.0.0.1
+2025-08-02 15:25:09,452 - DEBUG - User-Agent: curl/7.81.0
+2025-08-02 15:25:09,452 - INFO - Verifying Telegram Web App data
+2025-08-02 15:25:09,453 - INFO - === Starting Telegram WebApp data verification ===
+2025-08-02 15:25:09,453 - DEBUG - Received raw init_data: {"user":{"id":123456789,"first_name":"Test","username":"testuser","photo_url":"https://t.me/i/userpic/320/testuser.jpg"},"hash":"debug_hash"}
+2025-08-02 15:25:09,453 - DEBUG - Attempting to parse init_data as JSON
+2025-08-02 15:25:09,453 - DEBUG - Successfully parsed JSON data: {
+  "user": {
+    "id": 123456789,
+    "first_name": "Test",
+    "username": "testuser",
+    "photo_url": "https://t.me/i/userpic/320/testuser.jpg"
+  },
+  "hash": "debug_hash"
+}
+2025-08-02 15:25:09,453 - INFO - Found user data in JSON
+2025-08-02 15:25:09,453 - DEBUG - User data: {
+  "id": 123456789,
+  "first_name": "Test",
+  "username": "testuser",
+  "photo_url": "https://t.me/i/userpic/320/testuser.jpg"
+}
+2025-08-02 15:25:09,453 - INFO - All required user fields present
+2025-08-02 15:25:09,453 - WARNING - Debug mode: skipping hash verification
+2025-08-02 15:25:09,453 - INFO - Telegram data verified successfully
+2025-08-02 15:25:09,453 - INFO - Creating/updating user in database
+2025-08-02 15:25:09,453 - INFO - === Starting user creation/update process ===
+2025-08-02 15:25:09,453 - DEBUG - Input user data: {
+  "id": 123456789,
+  "first_name": "Test",
+  "username": "testuser",
+  "photo_url": "https://t.me/i/userpic/320/testuser.jpg"
+}
+2025-08-02 15:25:09,453 - ERROR - Error creating/updating user: Object of type datetime is not JSON serializable
+Traceback (most recent call last):
+  File "/root/HG/backend/app/services/auth.py", line 153, in create_or_update_user
+    logger.debug(f"Prepared user dict: {json.dumps(user_dict, indent=2)}")
+  File "/usr/lib/python3.10/json/__init__.py", line 238, in dumps
+    **kw).encode(obj)
+  File "/usr/lib/python3.10/json/encoder.py", line 201, in encode
+    chunks = list(chunks)
+  File "/usr/lib/python3.10/json/encoder.py", line 431, in _iterencode
+    yield from _iterencode_dict(o, _current_indent_level)
+  File "/usr/lib/python3.10/json/encoder.py", line 405, in _iterencode_dict
+    yield from chunks
+  File "/usr/lib/python3.10/json/encoder.py", line 438, in _iterencode
+    o = _default(o)
+  File "/usr/lib/python3.10/json/encoder.py", line 179, in default
+    raise TypeError(f'Object of type {o.__class__.__name__} '
+TypeError: Object of type datetime is not JSON serializable
+2025-08-02 15:25:09,457 - ERROR - Error during TMA login: Object of type datetime is not JSON serializable
+Traceback (most recent call last):
+  File "/root/HG/backend/app/routers/auth.py", line 43, in tma_login
+    user = await create_or_update_user(user_data)
+  File "/root/HG/backend/app/services/auth.py", line 153, in create_or_update_user
+    logger.debug(f"Prepared user dict: {json.dumps(user_dict, indent=2)}")
+  File "/usr/lib/python3.10/json/__init__.py", line 238, in dumps
+    **kw).encode(obj)
+  File "/usr/lib/python3.10/json/encoder.py", line 201, in encode
+    chunks = list(chunks)
+  File "/usr/lib/python3.10/json/encoder.py", line 431, in _iterencode
+    yield from _iterencode_dict(o, _current_indent_level)
+  File "/usr/lib/python3.10/json/encoder.py", line 405, in _iterencode_dict
+    yield from chunks
+  File "/usr/lib/python3.10/json/encoder.py", line 438, in _iterencode
+    o = _default(o)
+  File "/usr/lib/python3.10/json/encoder.py", line 179, in default
+    raise TypeError(f'Object of type {o.__class__.__name__} '
+TypeError: Object of type datetime is not JSON serializable
+2025-08-02 15:25:09,458 - INFO - Method: POST Path: /auth/tma-login Status: 500 Time: 6.28ms
+INFO:     127.0.0.1:49010 - "POST /auth/tma-login?init_data=%7B%22user%22%3A%7B%22id%22%3A123456789%2C%22first_name%22%3A%22Test%22%2C%22username%22%3A%22testuser%22%2C%22photo_url%22%3A%22https%3A%2F%2Ft.me%2Fi%2Fuserpic%2F320%2Ftestuser.jpg%22%7D%2C%22hash%22%3A%22debug_hash%22%7D HTTP/1.1" 500 Internal Server Error
+WARNING:  StatReload detected changes in 'app/services/auth.py'. Reloading...
 INFO:     Shutting down
 INFO:     Waiting for application shutdown.
-2025-07-30 17:17:12,952 - INFO - Closing MongoDB connection...
-2025-07-30 17:17:12,953 - INFO - MongoDB connection closed
+2025-08-02 15:28:03,464 - INFO - Closing MongoDB connection...
+2025-08-02 15:28:03,465 - INFO - MongoDB connection closed
 INFO:     Application shutdown complete.
-INFO:     Finished server process [1272556]
-INFO:     Started server process [1272759]
+INFO:     Finished server process [2145368]
+INFO:     Started server process [2146180]
 INFO:     Waiting for application startup.
-2025-07-30 17:17:13,649 - INFO - Connecting to MongoDB...
-2025-07-30 17:17:13,653 - INFO - Successfully connected to MongoDB
+2025-08-02 15:28:05,119 - INFO - Connecting to MongoDB...
+2025-08-02 15:28:05,133 - INFO - Successfully connected to MongoDB
 INFO:     Application startup complete.
 INFO:     Shutting down
 INFO:     Waiting for application shutdown.
-2025-07-30 17:17:23,786 - INFO - Closing MongoDB connection...
-2025-07-30 17:17:23,787 - INFO - MongoDB connection closed
+2025-08-02 15:28:12,173 - INFO - Closing MongoDB connection...
+2025-08-02 15:28:12,174 - INFO - MongoDB connection closed
 INFO:     Application shutdown complete.
-INFO:     Finished server process [1272759]
-INFO:     Stopping reloader process [1272554]
+INFO:     Finished server process [2146180]
+INFO:     Stopping reloader process [2145365]

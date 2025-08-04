@@ -7,18 +7,10 @@ export default function JoinGame({ gameId }) {
   const { joinGame, createGame } = useGame();
   const [isLoading, setIsLoading] = useState(false);
 
-  // Добавляем логи при монтировании компонента
-  useEffect(() => {
-    console.log('JoinGame component mounted with gameId:', gameId);
-  }, [gameId]);
+  // Определяем текст кнопки
+  const buttonText = gameId ? "JOIN GAME" : "CREATE GAME";
 
   const handleClick = async (e) => {
-    // Показываем alert для проверки срабатывания клика
-    alert('Button clicked! GameId: ' + (gameId || 'none'));
-    
-    console.log('JoinGame: Button clicked! gameId:', gameId);
-    console.log('Event target:', e.target);
-    console.log('Event currentTarget:', e.currentTarget);
     
     if (isLoading) return;
 
@@ -34,22 +26,13 @@ export default function JoinGame({ gameId }) {
         game = await createGame();
       }
 
-      console.log('Game result:', game);
-
       if (game && game.id) {
-        console.log('Redirecting to waiting room:', game.id);
-        // Используем простой редирект для проверки
-        window.location.href = `/waiting-room?gameId=${game.id}`;
-        // Закомментируем сложную навигацию для отладки
-        // window.history.replaceState({}, '', `/waiting-room?gameId=${game.id}`);
-        // router.replace(`/waiting-room?gameId=${game.id}`);
+        router.push(`/waiting-room?gameId=${game.id}`);
       } else {
         console.error('No game ID received');
-        alert('Error: No game ID received');
       }
     } catch (error) {
       console.error('Error:', error);
-      alert('Error: ' + error.message);
     } finally {
       setIsLoading(false);
     }
@@ -74,8 +57,8 @@ export default function JoinGame({ gameId }) {
       <svg width="334" height="140" viewBox="0 0 334 140" fill="none" xmlns="http://www.w3.org/2000/svg">
         <defs>
           <linearGradient id="joinGameGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stopColor="#FFB800" />
-            <stop offset="100%" stopColor="#FF8A00" />
+            <stop offset="0%" stopColor={gameId ? "#FFB800" : "#4CAF50"} />
+            <stop offset="100%" stopColor={gameId ? "#FF8A00" : "#45A049"} />
           </linearGradient>
         </defs>
         <g filter="url(#filter0_ddd_2236_43848)">
